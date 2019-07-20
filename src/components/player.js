@@ -29,6 +29,10 @@ const VideoLiveButton = styled.span`
 class Player extends Component {
   
   componentDidMount() {
+    this.initPlayer()
+  }
+  
+  initPlayer = () => {
     Shaka.polyfill.installAll();
     if (Shaka.Player.isBrowserSupported()) {
       const player = new Shaka.Player(this.player)
@@ -45,6 +49,14 @@ class Player extends Component {
     }
   }
 
+  togglePlayPause = () => {
+    if (this.player.paused) {
+      this.player.play()
+    } else {
+      this.player.pause() 
+    }
+  }
+
   render() {
     const style = {
       width: 640,
@@ -55,7 +67,14 @@ class Player extends Component {
     return (
       <PlayerWrapper>
         <PlayerInner>
-          <video style={style} ref={(player) => this.player = player} controls poster="https://linkassistive.com/wp-content/uploads/2012/12/big-buck-bunny-poster.png" />
+          <video
+            style={style} 
+            autoPlay={true} 
+            ref={(player) => this.player = player} 
+            onClick={this.togglePlayPause}
+            controls={false} 
+            poster="https://linkassistive.com/wp-content/uploads/2012/12/big-buck-bunny-poster.png" 
+           />
           <VideoTitle>
             <VideoLiveButton>Live</VideoLiveButton>
             Big Buck Bunny
