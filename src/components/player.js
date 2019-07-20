@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 
-import Shaka from "shaka-player";
+import Hls from "hls.js";
 
 const PlayerWrapper = styled.div`
   position: relative;
@@ -33,17 +33,16 @@ class Player extends Component {
   }
   
   initPlayer = () => {
-    Shaka.polyfill.installAll();
-    if (Shaka.Player.isBrowserSupported()) {
-      const player = new Shaka.Player(this.player)
-      const url = "https://www.radiantmediaplayer.com/media/bbb-360p.mp4"
-      player.load(url)
-        .then(() => {
-          console.log("video is playing")
-        })
-        .catch(e => {
-          console.error(e)
-        })
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource("http://192.168.1.133/hls/equals.m3u8")
+      hls.attachMedia(this.player)
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        this.player.play()
+      })
+      hls.on("hlsError", (e, data) => {
+        console.log(data)
+      })
     } else {
       alert("Browser is not supported")
     }
@@ -73,11 +72,10 @@ class Player extends Component {
             ref={(player) => this.player = player} 
             onClick={this.togglePlayPause}
             controls={false} 
-            poster="https://linkassistive.com/wp-content/uploads/2012/12/big-buck-bunny-poster.png" 
-           />
+            poster="http://mizhollywood.com/wp-content/uploads/2016/09/equals-film-poster-563x353.jpg" />
           <VideoTitle>
             <VideoLiveButton>Live</VideoLiveButton>
-            Big Buck Bunny
+            EQUALS
           </VideoTitle>
         </PlayerInner>
       </PlayerWrapper>
